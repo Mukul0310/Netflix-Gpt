@@ -1,5 +1,7 @@
-#Netflix-GPT:
-##Features:
+# Netflix-GPT:
+
+## Features:
+
 -Login/Singup
 --SingIN/SingUP form
 -- redirect to browse page
@@ -11,10 +13,13 @@
 ---MoviesSuggestions
 --MoviesLists \* N
 
-#Steps I followed!
+# Steps I followed!
+
 -Create React App Set UP
 -Configured Tailwind
 -Install React Router Dom
 -Header
 -SingIN
 -SingUP
+-Form Validation
+-firebase Installed
