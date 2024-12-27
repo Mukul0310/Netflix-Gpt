@@ -4,12 +4,18 @@ import { checkValidate } from "../Utils/validate";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "../Utils/firebase";
+
+import { useDispatch } from "react-redux";
+import { addUser } from "../Utils/userSlice";
+import { BANNER, USER_AVTAR } from "../Utils/constants";
 
 const Login = () => {
   const [IsSingInform, setIsSingInform] = useState(true);
   const [errorMessage, seterrorMessage] = useState(null);
+  const dispatch = useDispatch();
 
   const email = useRef(null);
   const password = useRef(null);
@@ -38,6 +44,25 @@ const Login = () => {
         .then((userCredential) => {
           // Signed up
           const user = userCredential.user;
+          updateProfile(user, {
+            displayName: fullName.current.value,
+            photoURL: USER_AVTAR,
+          })
+            .then(async () => {
+              await user.reload();
+              const { uid, displayName, email, photoURL } = auth.currentUser;
+              dispatch(
+                addUser({
+                  uid: uid,
+                  displayName: displayName,
+                  email: email,
+                  photoURL: photoURL,
+                })
+              );
+            })
+            .catch((error) => {
+              seterrorMessage(error.message);
+            });
           console.log(user);
         })
         .catch((error) => {
@@ -53,8 +78,8 @@ const Login = () => {
       )
         .then((userCredential) => {
           // Signed in
+          // eslint-disable-next-line
           const user = userCredential.user;
-          console.log(user);
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -69,10 +94,7 @@ const Login = () => {
     <div>
       <Header />
       <div className="absolute">
-        <img
-          src="https://assets.nflxext.com/ffe/siteui/vlv3/150c4b42-11f6-4576-a00f-c631308b1e43/web/IN-en-20241216-TRIFECTA-perspective_915a9055-68ad-4e81-b19a-442f1cd134dc_medium.jpg"
-          alt="netflix-banner"
-        />
+        <img src={BANNER} alt="netflix-banner" />
       </div>
 
       <form
