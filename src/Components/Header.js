@@ -4,13 +4,23 @@ import { auth } from "../Utils/firebase";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "../Utils/userSlice";
-import { LOGO } from "../Utils/constants";
+import { LOGO, SUPPORTED_LANG } from "../Utils/constants";
+import { toggleGptSearchView } from "../Utils/gptSlice";
+import { changeLanguage } from "../Utils/configSlice";
 
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const user = useSelector((store) => store.user);
+  const showLangugeSelector = useSelector((store) => store.gpt.showgptSearch);
+
+  const handgptSearchClick = () => {
+    dispatch(toggleGptSearchView());
+  };
+
+  const handleLanguagechange = (e) => {
+    dispatch(changeLanguage(e.target.value));
+  };
 
   const handleSignout = () => {
     signOut(auth)
@@ -57,12 +67,41 @@ const Header = () => {
 
       {user && (
         <div className="flex mx-4">
+          {showLangugeSelector && (
+            <div className="">
+              <select
+                className="bg-black text-white rounded-lg my-4 p-2 "
+                onChange={handleLanguagechange}
+              >
+                {SUPPORTED_LANG.map((language) => (
+                  <option
+                    className=""
+                    key={language.identifier}
+                    value={language.identifier}
+                  >
+                    {language.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          <div>
+            <button
+              className="bg-purple-800 text-white p-2 mx-2 mt-4 rounded-lg"
+              onClick={handgptSearchClick}
+            >
+              {showLangugeSelector ? "Home Page" : "GPT Search"}
+            </button>
+          </div>
           <div>
             <img className="w-16 h-16 " alt="User-image" src={user?.photoURL} />
-            <h1 className=" font-bold">Hi, {user?.displayName}</h1>
+            <h1 className=" font-bold text-white">Hi, {user?.displayName}</h1>
           </div>
 
-          <button className="text-red-600 font-bold" onClick={handleSignout}>
+          <button
+            className="mx-2 text-red-600 font-bold"
+            onClick={handleSignout}
+          >
             Sign Out
           </button>
         </div>
